@@ -1,12 +1,7 @@
-#####################################################################
-##                           include
-#####################################################################
-
 [include mainsail.cfg]
 #[include nevermore.cfg]
-[include blobifier/blobifier.cfg]
-[include AFC/*.cfg]
-[include Macro/*.cfg]
+[include nozzle.cfg]
+[include blobifier.cfg]
 
 #####################################################################
 ##                   Model and Acceleration
@@ -54,41 +49,37 @@ canbus_uuid: f5d9589866d0               # CAN bus unique identifier for EBBCan M
 ##                     cartographer V3 (ADXL 345)
 #####################################################################
 
-[mcu cartographer]
+[scanner]
 canbus_uuid: 34efeab83e51
-# restart_method: command
-
-[cartographer]
-mcu: cartographer
 #    Fill in the UUID that was just recorded           
 x_offset: 0                          
 #    adjust for your cartographers offset from nozzle to middle of coil
 y_offset: 21                         
 #    adjust for your cartographers offset from nozzle to middle of coil
-# backlash_comp: 0.00669
+backlash_comp: 0.00669
 #   Backlash compensation distance for removing Z backlash before measuring
 #   the sensor response.
-verbose: yes 
+# 
 #   Offsets are measured from the centre of your coil, to the tip of your nozzle 
 #   on a level axis. It is vital that this is accurate. 
 #calibration_method: touch
 #    leave this as touch unless you want to use scan only for everything. 
-# sensor: cartographer
-# #    this must be set as cartographer unless using IDM etc.
-# sensor_alt: carto
-# #    alternate name to call commands. CARTO_TOUCH etc
-#artographer_touch_z_offset: 0.05         
-# #    This is the default and will be overwritten and added to the DO NOT SAVE area by using UI to save z offset
-# mesh_runs: 2
-# #    Number of passes to make during mesh scan.
-# tc_a_a:-1.156103934233054e-05
-# tc_a_b:2.4764344519025965
-# tc_b_a:0.0009609625501968029
-# tc_b_b:-319.58976596436185
+sensor: cartographer
+#    this must be set as cartographer unless using IDM etc.
+sensor_alt: carto
+#    alternate name to call commands. CARTO_TOUCH etc
+#scanner_touch_z_offset: 0.05         
+#    This is the default and will be overwritten and added to the DO NOT SAVE area by using UI to save z offset
+mesh_runs: 2
+#    Number of passes to make during mesh scan.
+tc_a_a:-1.156103934233054e-05
+tc_a_b:2.4764344519025965
+tc_b_a:0.0009609625501968029
+tc_b_b:-319.58976596436185
 
 
 [adxl345]
-cs_pin: cartographer:PA3
+cs_pin: scanner:PA3
 spi_bus: spi1
 
 [resonance_tester]
@@ -122,16 +113,16 @@ sensor_type: temperature_mcu             # MCU internal temperature sensor.
 [temperature_sensor BTT-PI]
 sensor_type: temperature_host            # Host system internal temperature sensor.
 
-[temperature_sensor cartographer]
+[temperature_sensor Cartographer_MCU]
 sensor_type: temperature_mcu
-sensor_mcu: cartographer
-min_temp: 5
+sensor_mcu: scanner
+min_temp: 0
 max_temp: 105
 
-[temperature_sensor cartographer_coil]
-sensor_type: cartographer_coil
-min_temp: 5
-max_temp: 140
+# [temperature_sensor cartographer_coil]
+# sensor_type: cartographer_coil
+# min_temp: 5
+# max_temp: 140
 
 #####################################################################
 #                        B(X) ---------A(Y)
@@ -328,33 +319,32 @@ sensor_type: Generic 3950
 sensor_pin: EBBCan:gpio27 
 
 #heater_pin: EBBCan:gpio7             # Heater pin
-control: pid                         # Control method
-pid_Kp: 24.328                       # Proportional parameter of the PID controller
-pid_Ki: 1.908                        # Integral parameter of the PID controller
-pid_Kd: 77.543                       # Derivative parameter of the PID controller
-max_power: 1.0
+#control: pid                         # Control method
+#pid_Kp: 24.328                       # Proportional parameter of the PID controller
+#pid_Ki: 1.908                        # Integral parameter of the PID controller
+#pid_Kd: 77.543                       # Derivative parameter of the PID controller
 min_temp: -20                        # Minimum temperature
 max_temp: 350                        # Maximum temperature
 min_extrude_temp: 170                # Minimum extrude temperature
 pressure_advance: 0.05               # Pressure advance - try to keep pressure below 1.0
 pressure_advance_smooth_time: 0.040   # Pressure advance smooth time - default is 0.040
 max_extrude_only_distance: 400
-# Nozzle temperature PID calibration command: "PID_CALIBRATE HEATER=extruder TARGET=245"
+## Nozzle temperature PID calibration command: "PID_CALIBRATE HEATER=extruder TARGET=245"
 # sensor_type: MAX31865                # Temperature sensor type
 # sensor_pin: EBBCan:gpio9             # Sensor pin
 # spi_software_sclk_pin: EBBCan:gpio10 # SPI clock pin
 # spi_software_mosi_pin: EBBCan:gpio8  # SPI master out slave in pin
 # spi_software_miso_pin: EBBCan:gpio11 # SPI master in slave out pin
-# rtd_nominal_r: 1000                   # RTD nominal resistance
-# rtd_reference_r: 4300                 # RTD reference resistance
+# rtd_nominal_r: 100                   # RTD nominal resistance
+# rtd_reference_r: 430                 # RTD reference resistance
 # rtd_num_of_wires: 2                  # Number of wires for the RTD
 #--------------------------------------------------------------------
 
-# [verify_heater extruder]             # Heater block temperature tolerance configuration
-# max_error: 120                       # Maximum error
-# check_gain_time: 120                 # Tolerance time
-# hysteresis: 50                       # Tolerance temperature
-# heating_gain: 2                      # Heating gain
+[verify_heater extruder]             # Heater block temperature tolerance configuration
+max_error: 120                       # Maximum error
+check_gain_time: 120                 # Tolerance time
+hysteresis: 50                       # Tolerance temperature
+heating_gain: 2                      # Heating gain
 
 #--------------------------------------------------------------------
 
@@ -376,7 +366,7 @@ sensor_type: ATC Semitec 104GT-2	     # ATC Semitec 104GT-2
 min_temp: 0                              # Minimum temperature threshold
 max_temp: 120                            # Maximum temperature threshold
 max_power: 1.0                           # Maximum power for the heater or fan
-control: watermark
+
 #--------------------------------------------------------------------
 
 [idle_timeout]
@@ -509,13 +499,13 @@ initial_BLUE: 0.2                       # Initial blue brightness
 ####################################################################################
 [quad_gantry_level]
 gantry_corners:                          # Coordinates for the gantry corners
-    -60,-10
-    360,370
+	-60,-10
+	360,370
 points:
-    50,25
-    50,225
-    250,225
-    250,25
+	50,25
+	50,225
+	250,225
+	250,25
 speed: 500                               # Levelling speed in mm/min
 horizontal_move_z: 2                     # Z-axis height for horizontal moves
 retries: 5                               # Number of retries for out-of-tolerance adjustments
@@ -532,114 +522,110 @@ gcode:
     G28                                  # Home all axes again
     G0 X150 Y150 Z30 F3600               # Move to a position (adjust for 300mm or 350mm models)
     
-    #--------------------------------------------------------------------
-    
+#--------------------------------------------------------------------
+
 [gcode_macro PAUSE]
 description: Pause the actual running print
 rename_existing: PAUSE_BASE
 # change this if you need more or less extrusion
 variable_extrude: 1.0
 gcode:
-    ##### read E from pause macro #####
-    {% set E = printer["gcode_macro PAUSE"].extrude|float %}
-    ##### set park positon for x and y #####
-    # default is your max posion from your printer.cfg
-    {% set x_park = printer.toolhead.axis_maximum.x|float - 5.0 %}
-    {% set y_park = printer.toolhead.axis_maximum.y|float - 5.0 %}
-    ##### calculate save lift position #####
-    {% set max_z = printer.toolhead.axis_maximum.z|float %}
-    {% set act_z = printer.toolhead.position.z|float %}
-    {% if act_z < (max_z - 2.0) %}
-    {% set z_safe = 2.0 %}
-    {% else %}
-    {% set z_safe = max_z - act_z %}
-    {% endif %}
-    ##### end of definitions #####
-    PAUSE_BASE
-    G91
-    {% if printer.extruder.can_extrude|lower == 'true' %}
+  ##### read E from pause macro #####
+  {% set E = printer["gcode_macro PAUSE"].extrude|float %}
+  ##### set park positon for x and y #####
+  # default is your max posion from your printer.cfg
+  {% set x_park = printer.toolhead.axis_maximum.x|float - 5.0 %}
+  {% set y_park = printer.toolhead.axis_maximum.y|float - 5.0 %}
+  ##### calculate save lift position #####
+  {% set max_z = printer.toolhead.axis_maximum.z|float %}
+  {% set act_z = printer.toolhead.position.z|float %}
+  {% if act_z < (max_z - 2.0) %}
+      {% set z_safe = 2.0 %}
+  {% else %}
+      {% set z_safe = max_z - act_z %}
+  {% endif %}
+  ##### end of definitions #####
+  PAUSE_BASE
+  G91
+  {% if printer.extruder.can_extrude|lower == 'true' %}
     G1 E-{E} F2100
-    {% else %}
+  {% else %}
     {action_respond_info("Extruder not hot enough")}
-    {% endif %}
-    {% if "xyz" in printer.toolhead.homed_axes %}
+  {% endif %}
+  {% if "xyz" in printer.toolhead.homed_axes %}
     G1 Z{z_safe} F900
     G90
     G1 X{x_park} Y{y_park} F6000
-    {% else %}
+  {% else %}
     {action_respond_info("Printer not homed")}
-    {% endif %}
-    
+  {% endif %} 
+
 [gcode_macro RESUME]
 description: Resume the actual running print
 rename_existing: RESUME_BASE
 gcode:
-    ##### read E from pause macro #####
-    {% set E = printer["gcode_macro PAUSE"].extrude|float %}
-    #### get VELOCITY parameter if specified ####
-    {% if 'VELOCITY' in params|upper %}
+  ##### read E from pause macro #####
+  {% set E = printer["gcode_macro PAUSE"].extrude|float %}
+  #### get VELOCITY parameter if specified ####
+  {% if 'VELOCITY' in params|upper %}
     {% set get_params = ('VELOCITY=' + params.VELOCITY)  %}
-    {%else %}
+  {%else %}
     {% set get_params = "" %}
-    {% endif %}
-    ##### end of definitions #####
-    {% if printer.extruder.can_extrude|lower == 'true' %}
+  {% endif %}
+  ##### end of definitions #####
+  {% if printer.extruder.can_extrude|lower == 'true' %}
     G91
     G1 E{E} F2100
-    {% else %}
+  {% else %}
     {action_respond_info("Extruder not hot enough")}
-    {% endif %}
-    RESUME_BASE {get_params}
-    
-    #--------------------------------------------------------------------
-    
+  {% endif %}  
+  RESUME_BASE {get_params}
+
+#--------------------------------------------------------------------
+
 [gcode_macro PRINT_START]
 gcode:
-    {% set target_bed = params.BED|int %}                         # Target bed temperature
-    {% set target_extruder = params.EXTRUDER|int %}               # Target nozzle temperature
-    {% set x_wait = printer.toolhead.axis_maximum.x|float / 2 %}  # Bed center X
-    {% set y_wait = printer.toolhead.axis_maximum.y|float / 2 %}  # Bed center Y
-    {% set initial_tool = params.TOOL|default("0")|int %}
-    
-    SET_GCODE_OFFSET Z=0                                          # Reset Z offset
-    G28                                                           # Home all axes
-    G90                                                           # Set to absolute positioning
-    
-    SET_DISPLAY_TEXT MSG="Heating Bed: {target_bed}°C"            # Display bed heating message
-    G1 X{x_wait} Y{y_wait} Z15 F9000                              # Move to bed center
-    M190 S{target_bed}                                            # Wait for bed to reach target temperature
-    # Heat hotend to 150c. This helps with getting a correct Z-home.
-    SET_DISPLAY_TEXT MSG="Hotend: 150c"                           # Display info on display
-    M109 S150                                                     # Heat hotend to 150c
-    # Load Initial Tool
-    SET_DISPLAY_TEXT MSG="Leveling..."                            # Display leveling message
-    QUAD_GANTRY_LEVEL                                             # Perform Z tilt adjustment
-    G28 Z                                                         # Re-home Z after adjustment
-    
-    SET_DISPLAY_TEXT MSG="Bed Mesh Calibration"                   # Display mesh calibration message
-    BED_MESH_CALIBRATE                                            # Perform bed mesh calibration
-    
-    SET_DISPLAY_TEXT MSG="Calibrating Z Offset"                   # Display Z offset calibration message
-    CARTOGRAPHER_TOUCH_CALIBRATE START=2762 MAX=5000
-    
-    SET_DISPLAY_TEXT MSG="Heating Nozzle: {target_extruder}°C"    # Display nozzle heating message
-    G1 X{x_wait} Y{y_wait} Z15 F9000                              # Move to bed center
-    M109 S{target_extruder}                                       # Heat nozzle to target temperature
-    T{initial_tool}
-    BLOBIFIER_CLEAN
-    
-    SET_DISPLAY_TEXT MSG="Preparing to Print..."                  # Display preparation message
-    G0 X{x_wait - 50} Y4 F10000                                   # Move to primeline start point
-    G0 Z0.4                                                       # Raise Z to 0.4mm
-    G91                                                           # Switch to relative positioning
-    G1 X100 E20 F1000                                             # Extrude primeline
-    G90                                                           # Switch back to absolute positioning
-    
-    #--------------------------------------------------------------------
-    
+  {% set target_bed = params.BED|int %}                  # Target bed temperature
+  {% set target_extruder = params.EXTRUDER|int %}        # Target nozzle temperature
+  {% set x_wait = printer.toolhead.axis_maximum.x|float / 2 %}  # Bed center X
+  {% set y_wait = printer.toolhead.axis_maximum.y|float / 2 %}  # Bed center Y
+
+  SET_GCODE_OFFSET Z=0                                   # Reset Z offset
+  G28                                                    # Home all axes
+  G90                                                    # Set to absolute positioning
+
+  SET_DISPLAY_TEXT MSG="Heating Bed: {target_bed}°C"     # Display bed heating message
+  G1 X{x_wait} Y{y_wait} Z15 F9000                       # Move to bed center
+  M190 S{target_bed}                                     # Wait for bed to reach target temperature
+
+  SET_DISPLAY_TEXT MSG="Leveling..."                    # Display leveling message
+  QUAD_GANTRY_LEVEL                                         # Perform Z tilt adjustment
+  G28 Z                                                  # Re-home Z after adjustment
+
+  SET_DISPLAY_TEXT MSG="Bed Mesh Calibration"            # Display mesh calibration message
+  BED_MESH_CALIBRATE                                     # Perform bed mesh calibration
+
+  SET_DISPLAY_TEXT MSG="Calibrating Z Offset"            # Display Z offset calibration message
+  CARTOGRAPHER_TOUCH                                     # Calibrate Z offset
+
+  SET_DISPLAY_TEXT MSG="Heating Nozzle: {target_extruder}°C" # Display nozzle heating message
+  G1 X{x_wait} Y{y_wait} Z15 F9000                       # Move to bed center
+  M109 S{target_extruder}                                # Heat nozzle to target temperature
+
+  BLOBIFIER_CLEAN
+
+  SET_DISPLAY_TEXT MSG="Preparing to Print..."           # Display preparation message
+  G0 X{x_wait - 50} Y4 F10000                            # Move to primeline start point
+  G0 Z0.4                                                # Raise Z to 0.4mm
+  G91                                                    # Switch to relative positioning
+  G1 X100 E20 F1000                                      # Extrude primeline
+  G90                                                    # Switch back to absolute positioning
+
+#--------------------------------------------------------------------
+
 [gcode_macro PRINT_END]                   # Set PRINT_END as the end-of-print macro to customise the after-print action.
 gcode:
-    M400
+    M400                           
     G92 E0                               # Zeroing the extruder
     G1 E-10.0 F3600                      # Retracting the filament
     G91                                  # relative position
@@ -650,104 +636,104 @@ gcode:
     G90                                  # absolute positioning
     G0  X150 Y300 F3600                  # Park the nozzle at the rear
     BED_MESH_CLEAR                       # Unloading net beds
-    
-    #--------------------------------------------------------------------
-    
+
+#--------------------------------------------------------------------
+
 [gcode_macro CANCEL_PRINT]
 description: Cancel the actual running print
 rename_existing: CANCEL_PRINT_BASE
 variable_park: True
 gcode:
-    ## Move head and retract only if not already in the pause state and park set to true
-    {% if printer.pause_resume.is_paused|lower == 'false' and park|lower == 'true'%}
+  ## Move head and retract only if not already in the pause state and park set to true
+  {% if printer.pause_resume.is_paused|lower == 'false' and park|lower == 'true'%}
     _TOOLHEAD_PARK_PAUSE_CANCEL
-    {% endif %}
-    TURN_OFF_HEATERS
-    CANCEL_PRINT_BASE
-    
+  {% endif %}
+  TURN_OFF_HEATERS
+  CANCEL_PRINT_BASE
+
 [gcode_macro _TOOLHEAD_PARK_PAUSE_CANCEL]
 description: Helper: park toolhead used in PAUSE and CANCEL_PRINT
 variable_extrude: 1.0
 gcode:
-    ##### set park positon for x and y #####
-    # default is your max posion from your printer.cfg
-    {% set x_park = printer.toolhead.axis_maximum.x|float - 5.0 %}
-    {% set y_park = printer.toolhead.axis_maximum.y|float - 5.0 %}
-    {% set z_park_delta = 2.0 %}
-    ##### calculate save lift position #####
-    {% set max_z = printer.toolhead.axis_maximum.z|float %}
-    {% set act_z = printer.toolhead.position.z|float %}
-    {% if act_z < (max_z - z_park_delta) %}
+  ##### set park positon for x and y #####
+  # default is your max posion from your printer.cfg
+  {% set x_park = printer.toolhead.axis_maximum.x|float - 5.0 %}
+  {% set y_park = printer.toolhead.axis_maximum.y|float - 5.0 %}
+  {% set z_park_delta = 2.0 %}
+  ##### calculate save lift position #####
+  {% set max_z = printer.toolhead.axis_maximum.z|float %}
+  {% set act_z = printer.toolhead.position.z|float %}
+  {% if act_z < (max_z - z_park_delta) %}
     {% set z_safe = z_park_delta %}
-    {% else %}
+  {% else %}
     {% set z_safe = max_z - act_z %}
-    {% endif %}
-    ##### end of definitions #####
-    {% if printer.extruder.can_extrude|lower == 'true' %}
+  {% endif %}
+  ##### end of definitions #####
+  {% if printer.extruder.can_extrude|lower == 'true' %}
     M83
     G1 E-{extrude} F2100
     {% if printer.gcode_move.absolute_extrude |lower == 'true' %} M82 {% endif %}
-    {% else %}
+  {% else %}
     {action_respond_info("Extruder not hot enough")}
-    {% endif %}
-    {% if "xyz" in printer.toolhead.homed_axes %}
+  {% endif %}
+  {% if "xyz" in printer.toolhead.homed_axes %}
     G91
     G1 Z{z_safe} F900
     G90
     G1 X{x_park} Y{y_park} F6000
     {% if printer.gcode_move.absolute_coordinates|lower == 'false' %} G91 {% endif %}
-    {% else %}
+  {% else %}
     {action_respond_info("Printer not homed")}
-    {% endif %}
-    
+  {% endif %}
+  
 [gcode_macro Unload_FILAMENT]
 gcode:
-    # Unload filament
-    G28                                    # Home all axes
-    G90                                    # Set to absolute positioning
-    G1 Z25 F360                            # Move Z-axis to 25mm height at 360mm/min
-    G1 X150 Y0 F7200                            # Move nozzle to (150,0) position at 7200mm/min
-    M109 S240                              # Heat nozzle to 240°C
-    G91                                    # Set to relative positioning
-    G1 E5 F120                             # Extrude 5mm of filament at 120mm/min
-    G1 E-50 F3600                            # Retract 50mm of filament at 3600mm/min
-    G1 E-30 F360                            # Retract 30mm of filament at 360mm/min
-    G92 E0                                 # Reset extruder position
-    G90                                    # Set to absolute positioning
-    # G1 X0 Y0 F6000 # Move nozzle to (0,0) position at 6000mm/min
-    M106 S0                                # Turn off part cooling fan
-    M104 S0                                # Set nozzle temperature to 0°C
-    M140 S0                                # Set bed temperature to 0°C
-    M84 X Y E                              # Disable X, Y, and extruder stepper motors
-    
+  # Unload filament
+  G28                                    # Home all axes
+  G90                                    # Set to absolute positioning
+  G1 Z25 F360                            # Move Z-axis to 25mm height at 360mm/min
+  G1 X150 Y0 F7200                            # Move nozzle to (150,0) position at 7200mm/min
+  M109 S240                              # Heat nozzle to 240°C
+  G91                                    # Set to relative positioning
+  G1 E5 F120                             # Extrude 5mm of filament at 120mm/min
+  G1 E-50 F3600                            # Retract 50mm of filament at 3600mm/min
+  G1 E-30 F360                            # Retract 30mm of filament at 360mm/min
+  G92 E0                                 # Reset extruder position
+  G90                                    # Set to absolute positioning
+  # G1 X0 Y0 F6000 # Move nozzle to (0,0) position at 6000mm/min
+  M106 S0                                # Turn off part cooling fan
+  M104 S0                                # Set nozzle temperature to 0°C
+  M140 S0                                # Set bed temperature to 0°C
+  M84 X Y E                              # Disable X, Y, and extruder stepper motors
+
 [gcode_macro Load_FILAMENT]
 gcode:
-    # Load filament
-    G28                                    # Home all axes
-    G90                                    # Set to absolute positioning
-    G1 Z3 F360                             # Move Z-axis to 3mm height at 360mm/min
-    G1 X150 Y0 F7200                       # Move nozzle to (150,0) position at 7200mm/min
-    M109 S240                              # Heat nozzle to 240°C
-    G1 X160 Y0 F3600                       # Move nozzle to (160,0) at 3600mm/min
-    G1 X140 Y0 F3600                       # Move nozzle to (140,0) at 3600mm/min
-    G1 X150 Y0 F3600                       # Move nozzle back to (150,0) at 3600mm/min
-    M106 S255                              # Turn on part cooling fan to cool filament block
-    G92 E0                                 # Reset extruder position
-    G91                                    # Set to relative positioning
-    G1 E50 F600                            # Extrude 50mm of filament at 600mm/min
-    G1 E10 F360                            # Extrude 10mm of filament at 360mm/min
-    G92 E0                                 # Reset extruder position
-    G90                                    # Set to absolute positioning
-    G1 Z10 F3600                           # Move Z-axis to 10mm height at 3600mm/min
-    M104 S0                                # Set nozzle temperature to 0°C
-    M140 S0                                # Set bed temperature to 0°C
-    G1 X150 Y80 F15000                     # Move hotend to (150,80) position
-    G1 Z1 F3600                            # Move Z-axis to 1mm height
-    G1 X150 Y0 F15000                      # Move hotend to (150,0) position
-    M106 S0                                # Turn off part cooling fan
-    G1 X150 Y300 F7200                     # Move nozzle to (150,300) position at 7200mm/min
-    M84 X Y E                              # Disable X, Y, and extruder stepper motors
-    
+  # Load filament
+  G28                                    # Home all axes
+  G90                                    # Set to absolute positioning
+  G1 Z3 F360                             # Move Z-axis to 3mm height at 360mm/min
+  G1 X150 Y0 F7200                       # Move nozzle to (150,0) position at 7200mm/min
+  M109 S240                              # Heat nozzle to 240°C
+  G1 X160 Y0 F3600                       # Move nozzle to (160,0) at 3600mm/min
+  G1 X140 Y0 F3600                       # Move nozzle to (140,0) at 3600mm/min
+  G1 X150 Y0 F3600                       # Move nozzle back to (150,0) at 3600mm/min
+  M106 S255                              # Turn on part cooling fan to cool filament block
+  G92 E0                                 # Reset extruder position
+  G91                                    # Set to relative positioning
+  G1 E50 F600                            # Extrude 50mm of filament at 600mm/min
+  G1 E10 F360                            # Extrude 10mm of filament at 360mm/min
+  G92 E0                                 # Reset extruder position
+  G90                                    # Set to absolute positioning
+  G1 Z10 F3600                           # Move Z-axis to 10mm height at 3600mm/min
+  M104 S0                                # Set nozzle temperature to 0°C
+  M140 S0                                # Set bed temperature to 0°C
+  G1 X150 Y80 F15000                     # Move hotend to (150,80) position
+  G1 Z1 F3600                            # Move Z-axis to 1mm height
+  G1 X150 Y0 F15000                      # Move hotend to (150,0) position
+  M106 S0                                # Turn off part cooling fan
+  G1 X150 Y300 F7200                     # Move nozzle to (150,300) position at 7200mm/min
+  M84 X Y E                              # Disable X, Y, and extruder stepper motors
+
 [gcode_macro QUAD_GANTRY_LEVEL]
 rename_existing: BASE_QUAD_GANTRY_LEVEL
 gcode:
@@ -755,102 +741,102 @@ gcode:
     BASE_QUAD_GANTRY_LEVEL HORIZONTAL_MOVE_Z=10 RETRY_TOLERANCE=1
     # Pass 2: Fine Leveling and Accuracy
     BASE_QUAD_GANTRY_LEVEL HORIZONTAL_MOVE_Z=2
-    
-    
+
+
 [gcode_macro DATA_SAMPLE]
 gcode:
-    G90
-    M106 S255
-    RESPOND TYPE=command MSG='Waiting for Coil to cool to 40'
-    M117 Waiting for Coil to cool to 40
-    TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MAXIMUM=40
-    RESPOND TYPE=command MSG='Starting Phase 1 of 4'
-    M117 Starting Phase 1 of 4
-    M106 S0
-    G28
-    G0 Z1
-    M104 S250
-    M140 S110
-    G4 P1000
-    CARTOGRAPHER_STREAM FILENAME=data1
-    M117 Waiting for Coil to heat to 70
-    RESPOND TYPE=command MSG='Waiting for Coil to heat to 70'
-    TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MINIMUM=55
-    CARTOGRAPHER_STREAM FILENAME=data1
-    M104 S0
-    M140 S0
-    M106 S255
-    G0 Z80
-    RESPOND TYPE=command MSG='Waiting for Coil to cool to 40'
-    M117 Waiting for Coil to cool to 40
-    TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MAXIMUM=40
-    
-    M117 Starting Phase 2 of 4
-    RESPOND TYPE=command MSG='Starting Phase 2 of 4'
-    M106 S0
-    G28 Z0
-    G0 Z2
-    M104 S250
-    M140 S110
-    G4 P1000
-    CARTOGRAPHER_STREAM FILENAME=data2
-    M117 Waiting for Coil to heat to 70
-    RESPOND TYPE=command MSG='Waiting for Coil to heat to 70'
-    TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MINIMUM=55
-    CARTOGRAPHER_STREAM FILENAME=data2
-    M104 S0
-    M140 S0
-    M106 S255
-    G0 Z80
-    RESPOND TYPE=command MSG='Waiting for Coil to cool to 40'
-    M117 Waiting for Coil to cool to 40
-    TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MAXIMUM=40
-    
-    M117 "Starting Phase 3 of 4"
-    RESPOND TYPE=command MSG='Starting Phase 3 of 4'
-    M106 S0
-    G28 Z0
-    G0 Z3
-    M104 S250
-    M140 S110
-    G4 P1000
-    CARTOGRAPHER_STREAM FILENAME=data3
-    M117 Waiting for Coil to heat to 70
-    RESPOND TYPE=command MSG='Waiting for Coil to heat to 70'
-    TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MINIMUM=55
-    CARTOGRAPHER_STREAM FILENAME=data3
-    M104 S0
-    M140 S0
-    M106 S255
-    G0 Z80
-    M117 Waiting for Coil to cool to 40
-    RESPOND TYPE=command MSG='Waiting for Coil to cool to 40'
-    TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MAXIMUM=40
-    
-    M117 "Starting Phase 4 of 4"
-    RESPOND TYPE=command MSG='Starting Phase 4 of 4'
-    M106 S0
-    G28 Z0
-    G0 Z5
-    M104 S250
-    M140 S110
-    G4 P1000
-    CARTOGRAPHER_STREAM FILENAME=data4
-    M117 Waiting for Coil to heat to 70
-    RESPOND TYPE=command MSG='Waiting for Coil to heat to 70'
-    TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MINIMUM=55
-    CARTOGRAPHER_STREAM FILENAME=data4
-    M104 S0
-    M140 S0
-    RESPOND TYPE=command MSG='Testing complete, please move files using: mv ~/klipper/data1 ~/klipper/data2 ~/klipper/data3 ~/klipper/data4 ~/cartographer-klipper/'
-    M117 "Testing complete, please move files using: mv ~/klipper/data1 ~/klipper/data2 ~/klipper/data3 ~/klipper/data4 ~/cartographer-klipper/"
-    RESPOND TYPE=command MSG='Follow the remaining instructions here: https://docs.cartographer3d.com/cartographer-probe/advanced-features/temperature-differential-calibration-beta'
-    M117 "Follow the remaining instructions here: https://docs.cartographer3d.com/cartographer-probe/advanced-features/temperature-differential-calibration-beta"
-    
-    
-    #--------------------------------------------------------------------
-    
-    # Enable object exclusion
+  G90
+  M106 S255
+  RESPOND TYPE=command MSG='Waiting for Coil to cool to 40'
+  M117 Waiting for Coil to cool to 40
+  TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MAXIMUM=40
+  RESPOND TYPE=command MSG='Starting Phase 1 of 4'
+  M117 Starting Phase 1 of 4
+  M106 S0
+  G28
+  G0 Z1
+  M104 S250
+  M140 S110
+  G4 P1000
+  CARTOGRAPHER_STREAM FILENAME=data1
+  M117 Waiting for Coil to heat to 70
+  RESPOND TYPE=command MSG='Waiting for Coil to heat to 70'
+  TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MINIMUM=55
+  CARTOGRAPHER_STREAM FILENAME=data1
+  M104 S0
+  M140 S0
+  M106 S255
+  G0 Z80
+  RESPOND TYPE=command MSG='Waiting for Coil to cool to 40'
+  M117 Waiting for Coil to cool to 40
+  TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MAXIMUM=40
+
+  M117 Starting Phase 2 of 4
+  RESPOND TYPE=command MSG='Starting Phase 2 of 4'
+  M106 S0
+  G28 Z0
+  G0 Z2
+  M104 S250
+  M140 S110
+  G4 P1000
+  CARTOGRAPHER_STREAM FILENAME=data2
+  M117 Waiting for Coil to heat to 70
+  RESPOND TYPE=command MSG='Waiting for Coil to heat to 70'
+  TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MINIMUM=55
+  CARTOGRAPHER_STREAM FILENAME=data2
+  M104 S0
+  M140 S0
+  M106 S255
+  G0 Z80
+  RESPOND TYPE=command MSG='Waiting for Coil to cool to 40'
+  M117 Waiting for Coil to cool to 40
+  TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MAXIMUM=40
+
+  M117 "Starting Phase 3 of 4"
+  RESPOND TYPE=command MSG='Starting Phase 3 of 4'
+  M106 S0
+  G28 Z0
+  G0 Z3
+  M104 S250
+  M140 S110
+  G4 P1000
+  CARTOGRAPHER_STREAM FILENAME=data3
+  M117 Waiting for Coil to heat to 70
+  RESPOND TYPE=command MSG='Waiting for Coil to heat to 70'
+  TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MINIMUM=55
+  CARTOGRAPHER_STREAM FILENAME=data3
+  M104 S0
+  M140 S0
+  M106 S255
+  G0 Z80
+  M117 Waiting for Coil to cool to 40
+  RESPOND TYPE=command MSG='Waiting for Coil to cool to 40'
+  TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MAXIMUM=40
+
+  M117 "Starting Phase 4 of 4"
+  RESPOND TYPE=command MSG='Starting Phase 4 of 4'
+  M106 S0
+  G28 Z0
+  G0 Z5
+  M104 S250
+  M140 S110
+  G4 P1000
+  CARTOGRAPHER_STREAM FILENAME=data4
+  M117 Waiting for Coil to heat to 70
+  RESPOND TYPE=command MSG='Waiting for Coil to heat to 70'
+  TEMPERATURE_WAIT SENSOR='temperature_sensor cartographer_coil' MINIMUM=55
+  CARTOGRAPHER_STREAM FILENAME=data4
+  M104 S0
+  M140 S0
+  RESPOND TYPE=command MSG='Testing complete, please move files using: mv ~/klipper/data1 ~/klipper/data2 ~/klipper/data3 ~/klipper/data4 ~/cartographer-klipper/'
+  M117 "Testing complete, please move files using: mv ~/klipper/data1 ~/klipper/data2 ~/klipper/data3 ~/klipper/data4 ~/cartographer-klipper/"
+  RESPOND TYPE=command MSG='Follow the remaining instructions here: https://docs.cartographer3d.com/cartographer-probe/advanced-features/temperature-differential-calibration-beta'
+  M117 "Follow the remaining instructions here: https://docs.cartographer3d.com/cartographer-probe/advanced-features/temperature-differential-calibration-beta"
+
+
+#--------------------------------------------------------------------
+
+# Enable object exclusion
 [exclude_object]
 
 # Enable arcs support
@@ -898,20 +884,22 @@ resolution: 0.1
 #    and strikes a balance between performance and readability, ensuring that graphs are clear
 #    without using too much RAM to generate them. Usually, you shouldn't need to change this value.
 
+#[include AFC/*.cfg]
+
 #*# <---------------------- SAVE_CONFIG ---------------------->
 #*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
 #*#
 #*# [heater_bed]
-#*# pid_kp = 35.258
-#*# pid_ki = 1.703
-#*# pid_kd = 182.458
 #*# control = pid
+#*# pid_kp = 59.674
+#*# pid_ki = 2.617
+#*# pid_kd = 340.143
 #*#
 #*# [extruder]
 #*# control = pid
-#*# pid_kp = 14.398
-#*# pid_ki = 0.906
-#*# pid_kd = 57.232
+#*# pid_kp = 21.819
+#*# pid_ki = 1.276
+#*# pid_kd = 93.274
 #*#
 #*# [scanner model default]
 #*# model_coef = 1.453341327925601,
@@ -940,55 +928,43 @@ resolution: 0.1
 #*# [bed_mesh default]
 #*# version = 1
 #*# points =
-#*# 	  0.045870, 0.046035, 0.038467, 0.034675, 0.034675, 0.038310, 0.042254, 0.045870, 0.049728, 0.049728, 0.053415, 0.060938, 0.068282, 0.057180, 0.045870, 0.042254, 0.038467, 0.038467, 0.042172, 0.057180, 0.072187, 0.094357, 0.098060, 0.083216, 0.049646, 0.023263, 0.015626, 0.023263, 0.034675, 0.038389
-#*# 	  0.038310, 0.027073, 0.023263, 0.023263, 0.023263, 0.027073, 0.030877, 0.040278, 0.042172, 0.038467, 0.042254, 0.049810, 0.059059, 0.047840, 0.034675, 0.034518, 0.030877, 0.034675, 0.047840, 0.060938, 0.094357, 0.116340, 0.112741, 0.087097, 0.053415, 0.027073, 0.019448, 0.027149, 0.038467, 0.042254
-#*# 	  0.034675, 0.030877, 0.023421, 0.023263, 0.023342, 0.023342, 0.030877, 0.038467, 0.042089, 0.036571, 0.038467, 0.046035, 0.053415, 0.046035, 0.034675, 0.030877, 0.027073, 0.030877, 0.042254, 0.059059, 0.083216, 0.101758, 0.101758, 0.083216, 0.053498, 0.027073, 0.015785, 0.023263, 0.038467, 0.044144
-#*# 	  0.034675, 0.019448, 0.017616, 0.015706, 0.015785, 0.011958, 0.019448, 0.027073, 0.027073, 0.027073, 0.027231, 0.030877, 0.034675, 0.027073, 0.023263, 0.019606, 0.023263, 0.027073, 0.038467, 0.046035, 0.060938, 0.068438, 0.068438, 0.057180, 0.038467, 0.015626, 0.015785, 0.027149, 0.038467, 0.057180
-#*# 	  0.042254, 0.029054, 0.019606, 0.015785, 0.011799, 0.015626, 0.019527, 0.027073, 0.030877, 0.027073, 0.028975, 0.038467, 0.038467, 0.034675, 0.030877, 0.030877, 0.027231, 0.038310, 0.046035, 0.045953, 0.042254, 0.042254, 0.042089, 0.046035, 0.030877, 0.011879, 0.011799, 0.027073, 0.042254, 0.060935
-#*# 	  0.042254, 0.019606, 0.011958, 0.011958, 0.011799, 0.011958, 0.015706, 0.023342, 0.023263, 0.023263, 0.030877, 0.045953, 0.049810, 0.053415, 0.053580, 0.046035, 0.046035, 0.046035, 0.049646, 0.042089, 0.030877, 0.023263, 0.030877, 0.030877, 0.019606, 0.008046, 0.011958, 0.027073, 0.049646, 0.068438
-#*# 	  0.042254, 0.023263, 0.015626, 0.023263, 0.027073, 0.030877, 0.027073, 0.027073, 0.027073, 0.027073, 0.045870, 0.062736, 0.083378, 0.094357, 0.097899, 0.086935, 0.075760, 0.064691, 0.060938, 0.038467, 0.019448, 0.008125, 0.015626, 0.023421, 0.019448, 0.004286, 0.008125, 0.023263, 0.045870, 0.068438
-#*# 	  0.030877, 0.015626, 0.019448, 0.034518, 0.049810, 0.047923, 0.038467, 0.030877, 0.027073, 0.034675, 0.053415, 0.086935, 0.116340, 0.127169, 0.112825, 0.109060, 0.090649, 0.072024, 0.053580, 0.023263, 0.008046, 0.004286, 0.015785, 0.019448, 0.008125, 0.004286, 0.011958, 0.030877, 0.049646, 0.072187
-#*# 	  0.023263, 0.023421, 0.034675, 0.060938, 0.083216, 0.083216, 0.068282, 0.049646, 0.038467, 0.042254, 0.060938, 0.094357, 0.123676, 0.138282, 0.123676, 0.116340, 0.097977, 0.072187, 0.049646, 0.023263, 0.000442, 0.004286, 0.011799, 0.015785, 0.011958, 0.004286, 0.011958, 0.027073, 0.046035, 0.068438
-#*# 	  0.015706, 0.019448, 0.046035, 0.079653, 0.105289, 0.097980, 0.072024, 0.049646, 0.038467, 0.047923, 0.068360, 0.094357, 0.105289, 0.120011, 0.107216, 0.098060, 0.075923, 0.057180, 0.042089, 0.009962, -0.003409, 0.004286, 0.011958, 0.015785, 0.009962, 0.008046, 0.015785, 0.034675, 0.049646, 0.064691
-#*# 	  0.015626, 0.023263, 0.045870, 0.072187, 0.094357, 0.090649, 0.068438, 0.046035, 0.034675, 0.038467, 0.053415, 0.075760, 0.081434, 0.083216, 0.083216, 0.072187, 0.057180, 0.047840, 0.030877, 0.004286, -0.007265, 0.000442, 0.011958, 0.017616, 0.008125, 0.000442, 0.011958, 0.027152, 0.042254, 0.057180
-#*# 	  0.011879, 0.015785, 0.030877, 0.049646, 0.055380, 0.049810, 0.038310, 0.027073, 0.019448, 0.025247, 0.038467, 0.053415, 0.049646, 0.038467, 0.034675, 0.038310, 0.038310, 0.030877, 0.021435, -0.001483, -0.011120, 0.000442, 0.015626, 0.015706, 0.008125, 0.000442, 0.015626, 0.030877, 0.049646, 0.053415
-#*# 	  0.008125, 0.011958, 0.019448, 0.025247, 0.027073, 0.027073, 0.019448, 0.019448, 0.017537, 0.023263, 0.034675, 0.042254, 0.038310, 0.025168, 0.017696, 0.023421, 0.027073, 0.023263, 0.019448, 0.004286, -0.007265, 0.004127, 0.011799, 0.011958, 0.007966, -0.003409, 0.007966, 0.027073, 0.042254, 0.053580
-#*# 	  0.008125, 0.000442, 0.004286, 0.008046, 0.004286, 0.000442, 0.000442, 0.004286, 0.009962, 0.019448, 0.030877, 0.034675, 0.023421, 0.009962, 0.000442, 0.011958, 0.011958, 0.013872, 0.004286, -0.003409, -0.011120, 0.000442, 0.008046, 0.008125, 0.000442, -0.003409, 0.011799, 0.030877, 0.047923, 0.053415
-#*# 	  0.013713, 0.015626, 0.011958, 0.011799, 0.004286, 0.004286, 0.000442, 0.007966, 0.011799, 0.023263, 0.036571, 0.042254, 0.030877, 0.011958, 0.002364, 0.004286, 0.008125, 0.011958, 0.004286, -0.003409, -0.010967, 0.004286, 0.008125, 0.006206, -0.003329, -0.007105, 0.011958, 0.034675, 0.049646, 0.057180
-#*# 	  0.019448, 0.011958, 0.017616, 0.011879, 0.004286, -0.003409, -0.007105, 0.002364, 0.008125, 0.011958, 0.027073, 0.030877, 0.019448, 0.004286, -0.003409, -0.003409, 0.002364, 0.008125, 0.004286, -0.003409, -0.010967, 0.000442, 0.006206, 0.000442, -0.003409, -0.003409, 0.017616, 0.042172, 0.057180, 0.057180
-#*# 	  0.027152, 0.027073, 0.027073, 0.019606, 0.004286, 0.004286, 0.000442, 0.007966, 0.011799, 0.015626, 0.021356, 0.027073, 0.019448, 0.004286, -0.003409, -0.003409, 0.000442, 0.008125, 0.011958, 0.000442, -0.007265, 0.000442, 0.004286, 0.000442, -0.003409, 0.000442, 0.015626, 0.042254, 0.053580, 0.060938
-#*# 	  0.030877, 0.023263, 0.021435, 0.011799, -0.003409, -0.003409, -0.003409, 0.004286, 0.004286, 0.000442, 0.008125, 0.013792, 0.011958, 0.000442, -0.007265, -0.007105, 0.000442, 0.008125, 0.008125, -0.003409, -0.011120, -0.003409, -0.003409, -0.007105, -0.010967, 0.000442, 0.011958, 0.034675, 0.049646, 0.060938
-#*# 	  0.030877, 0.030877, 0.030877, 0.015785, 0.000442, 0.000442, 0.000442, 0.008125, 0.004286, 0.004286, 0.008125, 0.015706, 0.015626, 0.004286, -0.003409, -0.003409, 0.000442, 0.004286, 0.004286, 0.000442, -0.009116, -0.007185, -0.003409, -0.011120, -0.014836, -0.009116, 0.004286, 0.019606, 0.038467, 0.051613
-#*# 	  0.030877, 0.023263, 0.015626, 0.000442, -0.007265, -0.007105, -0.001483, 0.004286, 0.004286, 0.000442, 0.002364, 0.008125, 0.011958, 0.004127, 0.000442, -0.007265, -0.005337, 0.000442, 0.004286, -0.003409, -0.011120, -0.011120, -0.007265, -0.010967, -0.011120, -0.009193, 0.000442, 0.015785, 0.034675, 0.045953
-#*# 	  0.027073, 0.023263, 0.015785, 0.008125, 0.004286, 0.000442, 0.008125, 0.011958, 0.015626, 0.011799, 0.011958, 0.015785, 0.015706, 0.011958, 0.004286, 0.000442, 0.000442, 0.000442, 0.004286, -0.003249, -0.010967, -0.010967, -0.013054, -0.010967, -0.014836, -0.014836, -0.007265, 0.008125, 0.027073, 0.038310
-#*# 	  0.017696, 0.011958, 0.004286, 0.004286, 0.000442, 0.000442, 0.004286, 0.011799, 0.011958, 0.011799, 0.011958, 0.011958, 0.011799, 0.004286, 0.000442, -0.003409, -0.003409, 0.000442, 0.000442, 0.000366, -0.011120, -0.014988, -0.010967, -0.007265, -0.007265, -0.007185, -0.003409, 0.015785, 0.030877, 0.034675
-#*# 	  0.019606, 0.019448, 0.015626, 0.008125, 0.007966, 0.008125, 0.015785, 0.021435, 0.021514, 0.023263, 0.019606, 0.019606, 0.017616, 0.008125, 0.008125, 0.004286, 0.004286, 0.008046, 0.008125, 0.000442, -0.007105, -0.011120, -0.011120, -0.007265, -0.007105, -0.007265, -0.003409, 0.009962, 0.027073, 0.034675
-#*# 	  0.019448, 0.011799, 0.008125, 0.004286, 0.000442, 0.008046, 0.011958, 0.019606, 0.015785, 0.019448, 0.015785, 0.019606, 0.019448, 0.011799, 0.008125, 0.007966, 0.007966, 0.004286, 0.008125, 0.004286, -0.007105, -0.007265, -0.007265, -0.003409, -0.003409, 0.000442, 0.004286, 0.019448, 0.030877, 0.034675
-#*# 	  0.023263, 0.019448, 0.015785, 0.011879, 0.011879, 0.011958, 0.019606, 0.027073, 0.027073, 0.027073, 0.027073, 0.030877, 0.027073, 0.019448, 0.015785, 0.015626, 0.015626, 0.011958, 0.015626, 0.011958, 0.004127, -0.003409, 0.000442, 0.002364, 0.004286, 0.004286, 0.008125, 0.019448, 0.034675, 0.042254
-#*# 	  0.027073, 0.019606, 0.015626, 0.011879, 0.011879, 0.011958, 0.019606, 0.027073, 0.027073, 0.030877, 0.030877, 0.030877, 0.027073, 0.021356, 0.019448, 0.019448, 0.019448, 0.023263, 0.023342, 0.015626, 0.008125, 0.004286, 0.006206, 0.011879, 0.015626, 0.015626, 0.015785, 0.028975, 0.045870, 0.049646
-#*# 	  0.032776, 0.030877, 0.027073, 0.023263, 0.023421, 0.023263, 0.027073, 0.034675, 0.038467, 0.038389, 0.038467, 0.042254, 0.038467, 0.030877, 0.027073, 0.030877, 0.030877, 0.030877, 0.030877, 0.027073, 0.019606, 0.011958, 0.011799, 0.015785, 0.015785, 0.019606, 0.019448, 0.030877, 0.042254, 0.053580
-#*# 	  0.034675, 0.027231, 0.025168, 0.019448, 0.015626, 0.019448, 0.023263, 0.034675, 0.036571, 0.038310, 0.038467, 0.042089, 0.038467, 0.030877, 0.030877, 0.030877, 0.034675, 0.036493, 0.036493, 0.034675, 0.023263, 0.019448, 0.021514, 0.023263, 0.027073, 0.027073, 0.027073, 0.038389, 0.053580, 0.060938
-#*# 	  0.042254, 0.042089, 0.034675, 0.030877, 0.027152, 0.030877, 0.034675, 0.042254, 0.045870, 0.045953, 0.046035, 0.049810, 0.046035, 0.038467, 0.036493, 0.038467, 0.042254, 0.042254, 0.046035, 0.042254, 0.034675, 0.027073, 0.027073, 0.027073, 0.027152, 0.023421, 0.027073, 0.034675, 0.045953, 0.058981
-#*# 	  0.049810, 0.042172, 0.034675, 0.030877, 0.030877, 0.034675, 0.042089, 0.047923, 0.049810, 0.049646, 0.053580, 0.053415, 0.051531, 0.046035, 0.042254, 0.042254, 0.049646, 0.051613, 0.057180, 0.053415, 0.042254, 0.040361, 0.036493, 0.038467, 0.038467, 0.038467, 0.036493, 0.042254, 0.057180, 0.064691
+#*# 	-0.002084, 0.010141, 0.004414, 0.002178, 0.000726, 0.001050, 0.000649, 0.004197, 0.010846, 0.011703, 0.011054, 0.014151, 0.015479, 0.011232, 0.009125, 0.011887, 0.013842, 0.008969, 0.002509, -0.004889, -0.013317, -0.015396, -0.011194, -0.009484, -0.012607, -0.013947, -0.015786, -0.008256, 0.008387, 0.017815
+#*# 	0.009026, 0.005024, 0.001944, 0.000022, -0.000941, -0.000472, -0.000777, 0.004391, 0.010473, 0.010551, 0.010203, 0.012659, 0.014593, 0.010457, 0.005596, 0.007829, 0.007428, 0.003324, 0.000404, -0.002769, -0.009432, -0.011951, -0.012949, -0.012226, -0.012651, -0.016772, -0.016537, -0.005873, 0.010322, 0.020474
+#*# 	0.003995, 0.002231, 0.001591, -0.000016, -0.000324, 0.000866, -0.000004, 0.003136, 0.007764, 0.007260, 0.006673, 0.010141, 0.013402, 0.008317, 0.003898, 0.004210, 0.004160, 0.000164, -0.000665, -0.004412, -0.010480, -0.014073, -0.014534, -0.014155, -0.014171, -0.015477, -0.014004, -0.003724, 0.013725, 0.023953
+#*# 	0.002045, 0.000189, 0.002459, 0.005229, 0.008978, 0.010815, 0.006996, 0.006165, 0.008042, 0.006378, 0.006221, 0.011072, 0.015468, 0.010546, 0.006302, 0.005008, 0.003400, -0.000774, -0.002058, -0.004726, -0.011816, -0.017221, -0.017959, -0.015338, -0.013799, -0.015537, -0.012533, -0.000090, 0.017283, 0.026663
+#*# 	0.000480, -0.001352, 0.004365, 0.014981, 0.025985, 0.029053, 0.020684, 0.012546, 0.008651, 0.006193, 0.007487, 0.015893, 0.023567, 0.019624, 0.011490, 0.006254, 0.002909, -0.001060, -0.001248, -0.003770, -0.011881, -0.017116, -0.019062, -0.015221, -0.012757, -0.012607, -0.008649, 0.003124, 0.021512, 0.030180
+#*# 	-0.001481, -0.001227, 0.006984, 0.022184, 0.040285, 0.048151, 0.036165, 0.021620, 0.013436, 0.008400, 0.011142, 0.025843, 0.039085, 0.034372, 0.019577, 0.009610, 0.002952, -0.000189, 0.000807, -0.002528, -0.010204, -0.017001, -0.018848, -0.014806, -0.012006, -0.008979, -0.002189, 0.011812, 0.027409, 0.035439
+#*# 	-0.004226, -0.005969, 0.001437, 0.015735, 0.035649, 0.046929, 0.040044, 0.028745, 0.018644, 0.011224, 0.013116, 0.031422, 0.049406, 0.043127, 0.023815, 0.009594, 0.002814, -0.000812, 0.001154, -0.001488, -0.010944, -0.018188, -0.020348, -0.015544, -0.010046, -0.002934, 0.008577, 0.024054, 0.038348, 0.040746
+#*# 	-0.006280, -0.008353, -0.004706, 0.002610, 0.017164, 0.033046, 0.040216, 0.037557, 0.030171, 0.018837, 0.015436, 0.029104, 0.042538, 0.036522, 0.017900, 0.005912, 0.000250, -0.001075, 0.000840, -0.001149, -0.010600, -0.018122, -0.021386, -0.016307, -0.008093, 0.002317, 0.019180, 0.039738, 0.050955, 0.050549
+#*# 	-0.007589, -0.010189, -0.008758, -0.005281, 0.007129, 0.025789, 0.042882, 0.052053, 0.046255, 0.028676, 0.015448, 0.017731, 0.025074, 0.018693, 0.006310, 0.000301, -0.002295, -0.004386, -0.001077, -0.003588, -0.010997, -0.017408, -0.021646, -0.016894, -0.008778, 0.003618, 0.021788, 0.042589, 0.055633, 0.055405
+#*# 	-0.006562, -0.008792, -0.007803, -0.005255, 0.005460, 0.025616, 0.051521, 0.068853, 0.064021, 0.037766, 0.016600, 0.012029, 0.012325, 0.005864, -0.002738, -0.004320, -0.003913, -0.004357, -0.002217, -0.004348, -0.010553, -0.016678, -0.019384, -0.014838, -0.008567, 0.000758, 0.015267, 0.035361, 0.053884, 0.059891
+#*# 	-0.007324, -0.010237, -0.009003, -0.007799, 0.001182, 0.019106, 0.045840, 0.067526, 0.062913, 0.038131, 0.014547, 0.006691, 0.004464, -0.002324, -0.008387, -0.008376, -0.006433, -0.006599, -0.003146, -0.006087, -0.012686, -0.017489, -0.019430, -0.013133, -0.006319, -0.000312, 0.009622, 0.030164, 0.054107, 0.070190
+#*# 	-0.006593, -0.010428, -0.009397, -0.009819, -0.004310, 0.007934, 0.027711, 0.045400, 0.046731, 0.028796, 0.010117, 0.003355, 0.002826, -0.002939, -0.008200, -0.008745, -0.007511, -0.007117, -0.004158, -0.007187, -0.014493, -0.019906, -0.019355, -0.010867, -0.000504, 0.005960, 0.012633, 0.032483, 0.062648, 0.087622
+#*# 	-0.006478, -0.009545, -0.010405, -0.011195, -0.010417, -0.004743, 0.007459, 0.019689, 0.023988, 0.014775, 0.003827, 0.001253, 0.000875, -0.004024, -0.009125, -0.009147, -0.008433, -0.008777, -0.006010, -0.009084, -0.018648, -0.022964, -0.019244, -0.007152, 0.009339, 0.018179, 0.024083, 0.041830, 0.076941, 0.107637
+#*# 	-0.004302, -0.006112, -0.006069, -0.005901, -0.005401, -0.006430, -0.004080, 0.004655, 0.008745, 0.004973, -0.000273, 0.000534, 0.000946, -0.005350, -0.019886, -0.009291, -0.008883, -0.009854, -0.008397, -0.010989, -0.019141, -0.023184, -0.020629, -0.004027, 0.016134, 0.028133, 0.030671, 0.044278, 0.077218, 0.110333
+#*# 	0.004067, 0.004034, 0.006623, 0.004240, 0.000944, -0.003525, -0.005478, -0.001959, 0.002197, -0.000229, -0.002082, 0.000852, 0.002167, -0.005578, -0.019423, -0.009553, -0.009606, -0.009212, -0.008409, -0.011061, -0.017927, -0.022581, -0.019634, -0.006719, 0.011499, 0.020774, 0.024132, 0.035929, 0.065891, 0.094044
+#*# 	0.020810, 0.020029, 0.021070, 0.019051, 0.009838, 0.000426, -0.003525, -0.001096, 0.002018, 0.000783, -0.001327, 0.001579, 0.002717, -0.003388, -0.009459, -0.010704, -0.009463, -0.009462, -0.005926, -0.007964, -0.016781, -0.023337, -0.022433, -0.012488, -0.001390, 0.003743, 0.005999, 0.021619, 0.048678, 0.069829
+#*# 	0.040862, 0.032254, 0.031338, 0.022523, 0.008799, -0.004720, -0.003728, -0.001480, 0.002609, 0.001220, -0.000803, 0.001677, 0.001854, -0.005390, -0.011599, -0.011169, -0.009534, -0.009714, -0.005203, -0.008457, -0.018481, -0.025841, -0.026283, -0.018466, -0.012454, -0.009677, -0.006459, 0.009288, 0.033594, 0.053992
+#*# 	0.046578, 0.033594, 0.034019, 0.024497, 0.003863, -0.004777, -0.003340, 0.000998, 0.003012, 0.001771, -0.000054, 0.003641, 0.003884, -0.004055, -0.009757, -0.008501, -0.005794, -0.005487, -0.004097, -0.007372, -0.017360, -0.025558, -0.028059, -0.022938, -0.017124, -0.014198, -0.011692, 0.004278, 0.028893, 0.051126
+#*# 	0.030782, 0.025325, 0.025918, 0.016449, -0.002574, -0.008614, -0.005545, -0.000104, 0.002269, 0.001524, 0.000749, 0.003050, 0.003601, -0.003590, -0.009291, -0.007973, -0.003853, -0.004816, -0.003032, -0.008155, -0.017843, -0.026500, -0.029458, -0.025422, -0.019380, -0.016335, -0.024087, -0.000187, 0.026608, 0.052064
+#*# 	0.020446, 0.017470, 0.018042, 0.003090, -0.005139, -0.008228, -0.004674, 0.000944, 0.004954, 0.004426, 0.003129, 0.005975, 0.006054, 0.000338, -0.005290, -0.004351, -0.000761, -0.001202, -0.000697, -0.004296, -0.015070, -0.023594, -0.026022, -0.022077, -0.017289, -0.016712, -0.014344, 0.000843, 0.028603, 0.053990
+#*# 	0.012253, 0.009185, 0.002506, -0.002685, -0.006163, -0.008386, -0.003825, 0.002106, 0.007769, 0.007697, 0.005442, 0.007242, 0.006711, 0.002078, -0.002739, -0.003046, -0.000343, -0.000864, 0.001065, -0.002179, -0.013368, -0.021203, -0.023867, -0.019767, -0.015866, -0.016420, -0.015619, -0.000556, 0.024241, 0.045536
+#*# 	0.004246, 0.000658, -0.002070, -0.004434, -0.005658, -0.007236, -0.002768, 0.003607, 0.008585, 0.008126, 0.006915, 0.008575, 0.008751, 0.002379, -0.002148, -0.001565, 0.000784, -0.000182, 0.001372, -0.000756, -0.010549, -0.018546, -0.021678, -0.016837, -0.013144, -0.015017, -0.015008, -0.002369, 0.019266, 0.036851
+#*# 	0.004330, -0.000399, -0.003725, -0.004780, -0.005164, -0.005760, -0.001283, 0.005529, 0.009483, 0.009235, 0.007784, 0.011150, 0.010609, 0.004511, -0.000844, 0.000656, 0.002455, 0.000888, 0.002772, 0.000671, -0.006048, -0.012708, -0.014030, -0.009394, -0.006739, -0.009698, -0.012334, -0.002332, 0.017040, 0.031601
+#*# 	0.001619, -0.001525, -0.005382, -0.008214, -0.008835, -0.008360, -0.003528, 0.003823, 0.007729, 0.007245, 0.006821, 0.010466, 0.010795, 0.003304, -0.002207, -0.000367, 0.001396, -0.000090, 0.001170, 0.000310, -0.004641, -0.006951, -0.003780, 0.002447, 0.002933, -0.003449, -0.008895, -0.001915, 0.013171, 0.026148
+#*# 	0.002916, -0.002171, -0.006491, -0.007950, -0.008779, -0.009318, -0.004148, 0.002519, 0.007964, 0.007871, 0.007873, 0.011206, 0.010312, 0.004500, -0.001189, -0.000319, 0.001396, 0.000105, 0.002082, 0.000994, -0.004054, -0.002477, 0.006086, 0.016468, 0.016059, 0.006304, -0.003302, 0.000407, 0.015428, 0.026935
+#*# 	0.003463, -0.000918, -0.004829, -0.006517, -0.006949, -0.008531, -0.003506, 0.003719, 0.009850, 0.010444, 0.011436, 0.014936, 0.014554, 0.008384, 0.002245, 0.004022, 0.005614, 0.005209, 0.005898, 0.004646, -0.000689, 0.000081, 0.010039, 0.022424, 0.026295, 0.016572, 0.004103, 0.005162, 0.018925, 0.031807
+#*# 	0.003778, 0.000571, -0.003695, -0.005250, -0.006115, -0.007581, -0.003821, 0.003444, 0.009886, 0.011415, 0.011957, 0.015554, 0.016276, 0.010086, 0.004673, 0.004958, 0.008342, 0.007926, 0.009189, 0.008166, 0.000451, -0.002416, 0.001973, 0.014033, 0.020458, 0.014128, 0.003618, 0.004262, 0.017689, 0.028378
+#*# 	0.003173, 0.001167, -0.003070, -0.006717, -0.008412, -0.010038, -0.003744, 0.002187, 0.008392, 0.010207, 0.009914, 0.014648, 0.015167, 0.009782, 0.004794, 0.007072, 0.010912, 0.011260, 0.012570, 0.010076, 0.002609, -0.003347, -0.003763, 0.004143, 0.011180, 0.008599, 0.003054, 0.004390, 0.016984, 0.028003
+#*# 	0.002421, -0.000613, -0.004614, -0.009237, -0.011218, -0.011013, -0.005765, 0.001704, 0.007626, 0.007907, 0.008894, 0.013547, 0.014889, 0.009676, 0.004134, 0.007393, 0.012500, 0.013119, 0.015738, 0.013827, 0.007691, 0.003768, 0.000557, 0.002325, 0.005171, 0.003978, 0.000398, 0.003329, 0.014139, 0.024205
+#*# 	0.003141, 0.001617, -0.002872, -0.006875, -0.008441, -0.007961, -0.002065, 0.004847, 0.010648, 0.011760, 0.012244, 0.017562, 0.018285, 0.013480, 0.007581, 0.010118, 0.014598, 0.017814, 0.021532, 0.021727, 0.018396, 0.013598, 0.005021, 0.006719, 0.007585, 0.007041, 0.003634, 0.006167, 0.016864, 0.026387
 #*# x_count = 30
 #*# y_count = 30
-#*# mesh_x_pps = 0
-#*# mesh_y_pps = 0
+#*# mesh_x_pps = 2
+#*# mesh_y_pps = 2
 #*# algo = bicubic
 #*# tension = 0.2
 #*# min_x = 30.0
 #*# max_x = 270.0
 #*# min_y = 30.0
 #*# max_y = 270.0
-#*#
-#*# [cartographer scan_model default]
-#*# coefficients = 1.4362231690797624,1.9045610399899147,0.8199899958351956,0.30180796466524334,0.4712266589424241,0.8406464781207611,-0.20707814071027916,-0.9153010383538591,0.27956562445960464,0.569135477352478
-#*# domain = 3.1846603735459625e-07,3.329907901157213e-07
-#*# z_offset = 0
-#*#
-#*# [cartographer touch_model default]
-#*# threshold = 2762
-#*# speed = 3
-#*# z_offset = -0.05
-
-[include shell_command.cfg]
