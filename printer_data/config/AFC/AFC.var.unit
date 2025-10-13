@@ -19,12 +19,12 @@
             "empty_spool_weight": 170.0,
             "spool_id": 154,
             "color": "#101211",
-            "weight": 644.2862691297935,
+            "weight": 646.0219711439995,
             "extruder_temp": 220,
             "runout_lane": null,
             "filament_status": "Ready",
             "filament_status_led": "#00cc00",
-            "status": "None",
+            "status": "Loaded",
             "dist_hub": 180.0
         },
         "lane2": {
@@ -46,12 +46,12 @@
             "empty_spool_weight": 130.0,
             "spool_id": 144,
             "color": "#E63034",
-            "weight": 789.8183412497879,
+            "weight": 791.4420356861117,
             "extruder_temp": 210,
             "runout_lane": null,
             "filament_status": "Ready",
             "filament_status_led": "#00cc00",
-            "status": "None",
+            "status": "Loaded",
             "dist_hub": 115.0
         },
         "lane3": {
@@ -73,7 +73,7 @@
             "empty_spool_weight": 170.0,
             "spool_id": 150,
             "color": "#FFFFFF",
-            "weight": 69.56553170035161,
+            "weight": 73.18330975862614,
             "extruder_temp": 220,
             "runout_lane": null,
             "filament_status": "In Tool",
@@ -100,12 +100,12 @@
             "empty_spool_weight": 162.0,
             "spool_id": null,
             "color": "",
-            "weight": 991.8900282531041,
+            "weight": 991,
             "extruder_temp": null,
             "runout_lane": null,
             "filament_status": "Ready",
             "filament_status_led": "#00cc00",
-            "status": "None",
+            "status": "Loaded",
             "dist_hub": 175.0
         }
     },
